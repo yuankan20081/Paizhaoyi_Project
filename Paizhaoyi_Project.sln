@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Paizhaoyi_Project", "Paizhaoyi_Project\Paizhaoyi_Project.vcxproj", "{692A3FC7-017F-4AB3-BFF9-EA4FE1CD88EE}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Paizhaoyi_Network", "Paizhaoyi_Network\Paizhaoyi_Network.vcxproj", "{519D0B2A-9462-48DE-B67E-CCB40011D4D1}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Paizhaoyi_NetProtocal", "Paizhaoyi_NetProtocal\Paizhaoyi_NetProtocal.vcxproj", "{C7CB6D48-7C40-4275-A845-88410B041508}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{692A3FC7-017F-4AB3-BFF9-EA4FE1CD88EE}.Debug|Win32.ActiveCfg = Debug|Win32
+		{692A3FC7-017F-4AB3-BFF9-EA4FE1CD88EE}.Debug|Win32.Build.0 = Debug|Win32
+		{692A3FC7-017F-4AB3-BFF9-EA4FE1CD88EE}.Release|Win32.ActiveCfg = Release|Win32
+		{692A3FC7-017F-4AB3-BFF9-EA4FE1CD88EE}.Release|Win32.Build.0 = Release|Win32
+		{519D0B2A-9462-48DE-B67E-CCB40011D4D1}.Debug|Win32.ActiveCfg = Debug|Win32
+		{519D0B2A-9462-48DE-B67E-CCB40011D4D1}.Debug|Win32.Build.0 = Debug|Win32
+		{519D0B2A-9462-48DE-B67E-CCB40011D4D1}.Release|Win32.ActiveCfg = Release|Win32
+		{519D0B2A-9462-48DE-B67E-CCB40011D4D1}.Release|Win32.Build.0 = Release|Win32
+		{C7CB6D48-7C40-4275-A845-88410B041508}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C7CB6D48-7C40-4275-A845-88410B041508}.Debug|Win32.Build.0 = Debug|Win32
+		{C7CB6D48-7C40-4275-A845-88410B041508}.Release|Win32.ActiveCfg = Release|Win32
+		{C7CB6D48-7C40-4275-A845-88410B041508}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
