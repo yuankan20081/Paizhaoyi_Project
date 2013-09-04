@@ -10,6 +10,12 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Network.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Network.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{519D0B2A-9462-48DE-B67E-CCB40011D4D1}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
@@ -74,12 +80,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="Network.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="dumy.cpp" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

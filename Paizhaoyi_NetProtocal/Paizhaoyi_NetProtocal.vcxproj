@@ -10,6 +10,9 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="NetProtocal.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{C7CB6D48-7C40-4275-A845-88410B041508}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
@@ -73,9 +76,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="NetProtocal.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

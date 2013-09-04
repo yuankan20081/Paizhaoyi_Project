@@ -6,7 +6,18 @@
 #include <unistd.h>
 #include <pthread.h>
 #include <memory>
+#include <fstream>
+#include <sstream>
 
+#define DEF_SAVE_DIR "./pics/"
+
+static string MakePath(const char *pszFilename)
+{
+	std::ostringstream oss;
+	oss << DEF_SAVE_DIR << pszFilename;
+	string strPath = oss.str();
+	return strPath;
+}
 
 void Network::Start(const string &host, const int port)
 {
@@ -41,12 +52,36 @@ Network::~Network()
 
 void *ThreadFunc(void *data)
 {
+	using std::ofstream;
+
 	Head *stHead = (Head *)data;
-	std::shared_ptr<char> buf(new char[stHead->m_nDataLength]);
-	int ret = recv(stHead->m_sockFD, (void *)buf.get(), stHead->m_nDataLength, 0);
+	//std::shared_ptr<char> buf(new char[stHead->m_nDataLength]);
+	char *buf = new char[stHead->m_nDataLength];
+	int nLeft = stHead->m_nDataLength;
+	char *tmp = buf;
+	while(nLeft)
+	{
+		int ret = recv(stHead->m_sockFD, (void *)tmp, nLeft, 0);
+		tmp += ret;
+		nLeft -= ret;
+	}
+	
 
 	//TODO
-	//写入数据库
+	//保存文件并写入数据库
+	string strPath = MakePath(stHead->m_pszPicName);
+	ofstream ofs(strPath.c_str());
+	if(!ofs)
+	{
+		Log::Critical("failed to save photo");
+		return NULL;
+	}
+	ofs.write(buf, stHead->m_nDataLength);
+	ofs.close();
+	//
+	delete[] buf;
+
+	//是否要开连接？
 	return NULL;
 }
 
@@ -135,10 +170,13 @@ void Network::Run()
 			}
 			else
 			{
+				//客户端连接后，应该将set中的位去掉。
+				//注意重置m_nMaxFD!
+				FD_CLR(fd, &m_stMainSet);
 				if(!HandleClientConn(fd))
 				{
-					FD_CLR(fd, &m_stMainSet);
-					Log::Info("one left");
+					//FD_CLR(fd, &m_stMainSet);
+					Log::Info("connection not handled!");
 				}
 			}
 		}

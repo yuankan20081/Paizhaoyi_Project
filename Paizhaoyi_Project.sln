@@ -7,6 +7,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Paizhaoyi_Network", "Paizha
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Paizhaoyi_NetProtocal", "Paizhaoyi_NetProtocal\Paizhaoyi_NetProtocal.vcxproj", "{C7CB6D48-7C40-4275-A845-88410B041508}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Paizhaoyi_Log", "Paizhaoyi_Log\Paizhaoyi_Log.vcxproj", "{88A4EBDA-9C4C-442C-A9AE-2418EF65EFDC}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Paizhaoyi_Model", "Paizhaoyi_Model\Paizhaoyi_Model.vcxproj", "{840D27E9-BA71-4177-8412-036B51E43D76}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -25,6 +29,14 @@ Global
 		{C7CB6D48-7C40-4275-A845-88410B041508}.Debug|Win32.Build.0 = Debug|Win32
 		{C7CB6D48-7C40-4275-A845-88410B041508}.Release|Win32.ActiveCfg = Release|Win32
 		{C7CB6D48-7C40-4275-A845-88410B041508}.Release|Win32.Build.0 = Release|Win32
+		{88A4EBDA-9C4C-442C-A9AE-2418EF65EFDC}.Debug|Win32.ActiveCfg = Debug|Win32
+		{88A4EBDA-9C4C-442C-A9AE-2418EF65EFDC}.Debug|Win32.Build.0 = Debug|Win32
+		{88A4EBDA-9C4C-442C-A9AE-2418EF65EFDC}.Release|Win32.ActiveCfg = Release|Win32
+		{88A4EBDA-9C4C-442C-A9AE-2418EF65EFDC}.Release|Win32.Build.0 = Release|Win32
+		{840D27E9-BA71-4177-8412-036B51E43D76}.Debug|Win32.ActiveCfg = Debug|Win32
+		{840D27E9-BA71-4177-8412-036B51E43D76}.Debug|Win32.Build.0 = Debug|Win32
+		{840D27E9-BA71-4177-8412-036B51E43D76}.Release|Win32.ActiveCfg = Release|Win32
+		{840D27E9-BA71-4177-8412-036B51E43D76}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
