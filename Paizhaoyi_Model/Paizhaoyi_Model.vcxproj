@@ -82,6 +82,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DataPool.cpp" />
+    <ClCompile Include="DB.cpp" />
     <ClCompile Include="mysql_connection_yk.cpp" />
     <ClCompile Include="mysql_recordset_yk.cpp" />
   </ItemGroup>

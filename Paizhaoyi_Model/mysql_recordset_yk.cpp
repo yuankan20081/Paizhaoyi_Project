@@ -1,6 +1,6 @@
 #include "mysql_recordset_yk.h"
 
-RecordSet::RecordSet(const MYSQL_RES *_RecordSet)
+RecordSet::RecordSet(MYSQL_RES *_RecordSet)
 	:m_sqlRecordSet(_RecordSet)
 {
 }
@@ -18,9 +18,9 @@ bool RecordSet::IsValid()
 
 size_t RecordSet::FieldCount()
 {
-	if(m_sqlResultSet)
+	if(m_sqlRecordSet)
 	{
-		return m_nFieldCount = mysql_num_fileds(m_sqlRecordSet);
+		return m_nFieldCount = mysql_num_fields(m_sqlRecordSet);
 	}
 	else
 	{
@@ -28,7 +28,7 @@ size_t RecordSet::FieldCount()
 	}
 }
 
-string RecordSet::FieldName(int _index) 
+string RecordSet::FieldName(unsigned int _index) 
 {
 	if(_index < 0 || _index > (m_nFieldCount - 1))
 	{
@@ -62,15 +62,32 @@ std::list<string> RecordSet::FetchOneRow()
 		throw string("Invalid RecordSet!!");
 	}
 	m_sqlRow = mysql_fetch_row(m_sqlRecordSet);
+
 	this->FieldCount();
 	std::list<string> rowitems;
-	if(!RowCount)
+	if(!RowCount() || !m_sqlRow)
 	{
 		return rowitems;
 	}
-	for(int i = 0; i < m_nFieldCount; i++)
+	//m_mapBoom.clear();//
+	for(unsigned int i = 0; i < m_nFieldCount; i++)
 	{
 		rowitems.push_back(m_sqlRow[i]);
+		//m_mapBoom.insert(pair<string, string>(this->FieldName(i), m_sqlRow[i]));
+		m_mapBoom[this->FieldName(i)] = m_sqlRow[i];
 	}
 	return rowitems;
+}
+
+string RecordSet::operator[](const string &_fieldname)
+{
+	map<string, string>::iterator it = m_mapBoom.find(_fieldname);
+	if(it != m_mapBoom.end())
+	{
+		return it->second;
+	}
+	else
+	{
+		throw string(_fieldname + " Not Found!!");
+	}
 }

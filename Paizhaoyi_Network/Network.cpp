@@ -1,6 +1,8 @@
 #include "Network.h"
 #include "../Paizhaoyi_Log/Log.h"
 #include "../Paizhaoyi_NetProtocal/NetProtocal.h"
+#include "../Paizhaoyi_DBProtocal/DBProtocal.h"
+#include "../Paizhaoyi_Model/DB.h"
 #include <arpa/inet.h>
 #include <fcntl.h>
 #include <unistd.h>
@@ -10,6 +12,9 @@
 #include <sstream>
 
 #define DEF_SAVE_DIR "./pics/"
+
+//extern class DB;
+extern DB mysqlDB;
 
 static string MakePath(const char *pszFilename)
 {
@@ -78,9 +83,9 @@ void *ThreadFunc(void *data)
 	}
 	ofs.write(buf, stHead->m_nDataLength);
 	ofs.close();
-	//
 	delete[] buf;
 
+	mysqlDB.Save(DBHead(strPath, stHead->m_pszMachineID, stHead->m_sockFD));
 	//是否要开连接？
 	return NULL;
 }

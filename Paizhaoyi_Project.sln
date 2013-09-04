@@ -11,6 +11,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Paizhaoyi_Log", "Paizhaoyi_
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Paizhaoyi_Model", "Paizhaoyi_Model\Paizhaoyi_Model.vcxproj", "{840D27E9-BA71-4177-8412-036B51E43D76}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Paizhaoyi_DBProtocal", "Paizhaoyi_DBProtocal\Paizhaoyi_DBProtocal.vcxproj", "{54EC1239-B0A5-48A4-BB0E-C7C58E63E80C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -37,6 +39,10 @@ Global
 		{840D27E9-BA71-4177-8412-036B51E43D76}.Debug|Win32.Build.0 = Debug|Win32
 		{840D27E9-BA71-4177-8412-036B51E43D76}.Release|Win32.ActiveCfg = Release|Win32
 		{840D27E9-BA71-4177-8412-036B51E43D76}.Release|Win32.Build.0 = Release|Win32
+		{54EC1239-B0A5-48A4-BB0E-C7C58E63E80C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{54EC1239-B0A5-48A4-BB0E-C7C58E63E80C}.Debug|Win32.Build.0 = Debug|Win32
+		{54EC1239-B0A5-48A4-BB0E-C7C58E63E80C}.Release|Win32.ActiveCfg = Release|Win32
+		{54EC1239-B0A5-48A4-BB0E-C7C58E63E80C}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
