@@ -1,12 +1,14 @@
 #pragma once
-#include "mysql_connection_yk.h"
+//#include "mysql_connection_yk.h"
 #include "../Paizhaoyi_DBProtocal/DBProtocal.h"
 #include "DataPool.h"
 #include <string>
+#include <mysql++.h>
 using std::string;
 
 class DB
 {
+	//using namespace mysqlpp;
 public:
 	bool Save(const DBHead &stDBHead);
 	//virtual bool Fetch();
@@ -15,7 +17,8 @@ public:
 		const string &strPasswd = "");
 	~DB();
 private:
-	Connection *m_sqlConn;
+	
+	mysqlpp::Connection *m_sqlConn;
 	string m_strDBName;
 	string m_strHost;
 	string m_strUserName;

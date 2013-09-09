@@ -3,6 +3,7 @@
 #include "../Paizhaoyi_NetProtocal/NetProtocal.h"
 #include "../Paizhaoyi_DBProtocal/DBProtocal.h"
 #include "../Paizhaoyi_Model/DB.h"
+#include "../Paizhaoyi_CommonFuncs/CommonFuncs.h"
 #include <arpa/inet.h>
 #include <fcntl.h>
 #include <unistd.h>
@@ -15,6 +16,9 @@
 
 //extern class DB;
 extern DB mysqlDB;
+
+static void SavePic(Head *stHead);
+static void SaveActtion(Head *stHead);
 
 static string MakePath(const char *pszFilename)
 {
@@ -32,18 +36,26 @@ void Network::Start(const string &host, const int port)
 	net.Run();
 }
 
-int Network::SendData(void *buf, size_t size)
+int Network::SendData(int sockFD, void *buf, size_t size)
 {
 	//return net.SendRaw(buf, size);
+	/*
 	Head *pstHead = (Head *)buf;
 	char *pData = (char *)buf + sizeof(Head);
 	return send(pstHead->m_sockFD, pData, pstHead->m_nDataLength, 0);
+	*/
+	SendRaw(sockFD, (char *)buf, size);
+	return 0;
 }
 
+/*
 int Network::SendRaw(void *buf, size_t size)
 {
 	
 }
+*/
+
+
 
 Network::Network(const string &host, const int port)
 	:m_strHost(host), m_nPort(port)
@@ -61,32 +73,15 @@ void *ThreadFunc(void *data)
 
 	Head *stHead = (Head *)data;
 	//std::shared_ptr<char> buf(new char[stHead->m_nDataLength]);
-	char *buf = new char[stHead->m_nDataLength];
-	int nLeft = stHead->m_nDataLength;
-	char *tmp = buf;
-	while(nLeft)
-	{
-		int ret = recv(stHead->m_sockFD, (void *)tmp, nLeft, 0);
-		tmp += ret;
-		nLeft -= ret;
-	}
 	
-
-	//TODO
-	//保存文件并写入数据库
-	string strPath = MakePath(stHead->m_pszPicName);
-	ofstream ofs(strPath.c_str());
-	if(!ofs)
+	if(stHead->m_bIsUpload)
 	{
-		Log::Critical("failed to save photo");
-		return NULL;
+		SavePic(stHead);
 	}
-	ofs.write(buf, stHead->m_nDataLength);
-	ofs.close();
-	delete[] buf;
-
-	mysqlDB.Save(DBHead(strPath, stHead->m_pszMachineID, stHead->m_sockFD));
-	//是否要开连接？
+	else
+	{
+		SaveActtion(stHead);
+	}
 	return NULL;
 }
 
@@ -98,6 +93,7 @@ static bool HandleClientConn(int fd)
 	int ret = recv(fd, (void *)&stHead, sizeof(Head), 0);
 	if(ret != sizeof(Head))
 	{
+		close(fd);
 		return false;
 	}
 
@@ -192,3 +188,36 @@ void Network::Run()
 
 
 
+void SavePic(Head *stHead)
+{
+	char *buf = new char[stHead->m_nDataLength];
+	int nLeft = stHead->m_nDataLength;
+	char *tmp = buf;
+	while(nLeft)
+	{
+		int ret = recv(stHead->m_sockFD, (void *)tmp, nLeft, 0);
+		tmp += ret;
+		nLeft -= ret;
+	}
+
+
+	//TODO
+	//保存文件并写入数据库
+	string strPath = MakePath(stHead->m_pszPicName);
+	ofstream ofs(strPath.c_str());
+	if(!ofs)
+	{
+		Log::Critical("failed to save photo");
+		return;
+	}
+	ofs.write(buf, stHead->m_nDataLength);
+	ofs.close();
+	delete[] buf;
+
+	mysqlDB.Save(DBHead(strPath, stHead->m_pszMachineID, stHead->m_sockFD));
+}
+
+void SaveActtion(Head *stHead)
+{
+	mysqlDB.Save(DBHead("", stHead->m_pszMachineID, stHead->m_sockFD, stHead->m_uActionBitFlag));
+}

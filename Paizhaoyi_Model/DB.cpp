@@ -4,7 +4,10 @@
 DB::DB(const string &strDbName, const string &strHost, const string &strUserName, const string &strPasswd /* = "" */)
 	:m_strDBName(strDbName), m_strHost(strHost), m_strUserName(strUserName), m_strPasswd(strPasswd)
 {
-	m_sqlConn = new Connection(m_strUserName, m_strPasswd, m_strDBName, m_strHost);
+	//m_sqlConn = new Connection(m_strUserName, m_strPasswd, m_strDBName, m_strHost);
+	//m_sqlConn = new mysqlpp::Connection(false);
+	//m_sqlConn->connect(strDbName.c_str(), strHost.c_str(), strUserName.c_str(), strPasswd.c_str()); //»¹ÒªÅÐ¶Ï
+	m_sqlConn = new mysqlpp::Connection(strDbName.c_str(), strHost.c_str(), strUserName.c_str(), strPasswd.c_str());
 	m_dpPool = new DataPool(100, m_sqlConn);
 }
 

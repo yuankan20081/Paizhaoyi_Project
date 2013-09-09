@@ -8,12 +8,12 @@ class Network
 public:
 	static void Start(const string &host, const int port);
 	~Network();
-	static int SendData(void *buf, size_t size);
+	static int SendData(int sockFD, void *buf, size_t size);
 private:
 	Network(const string &host, const int port);
 	bool Init();
 	void Run();
-	int SendRaw(void *buf, size_t size);
+	//int SendRaw(void *buf, size_t size);
 	void SetNonBlock();
 private:
 	int m_nListenFD;
