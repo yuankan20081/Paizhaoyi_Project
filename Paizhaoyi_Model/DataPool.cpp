@@ -215,7 +215,7 @@ bool DataPool::DumpPicPath(DBHead *pstDBHead)
 	query.execute();
 
 	//vector<Row> vecRow;
-	query << "select id from qrtest where picPath=" << mysqlpp::quote_only << pstDBHead->m_strPath << "and machineid=" << mysqlpp::quote_only
+	query << "select id from qrtest where images=" << mysqlpp::quote_only << pstDBHead->m_strPath << "and machineid=" << mysqlpp::quote_only
 		<< pstDBHead->m_strMachineID;
 	//query.storein(vecRow);
 	mysqlpp::StoreQueryResult res = query.store();
