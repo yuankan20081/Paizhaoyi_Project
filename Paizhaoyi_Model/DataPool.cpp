@@ -238,7 +238,7 @@ bool DataPool::DumpPicPath(DBHead *pstDBHead)
 	if(0 == fork())
 	{
 
-		execl("/usr/bin/python", "usr/bin/python", "ReqRQCode.py", res[0]["id"].c_str(), NULL);
+		execl("/usr/bin/python", "usr/bin/python", "ReqQRCode.py", res[0]["id"].c_str(), NULL);
 		return true;
 	}
 	
