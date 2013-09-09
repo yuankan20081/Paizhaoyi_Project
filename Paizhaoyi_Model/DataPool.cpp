@@ -289,7 +289,7 @@ bool DataPool::DumpAction(DBHead *pstDBHead)
 		query << "insert into download_statistics(date, " << g_vecField[i] << ", machineid) values(current_timestamp(), " 
 			 << "1, " << mysqlpp::quote_only << pstDBHead->m_strMachineID << ")";
 		query.execute();
-		m_sqlConn->
+		
 	}
 	/*
 	ostringstream oss;
