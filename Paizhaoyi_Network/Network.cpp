@@ -116,7 +116,8 @@ bool Network::Init()
 	sockaddr_in stSvrAddr;
 	stSvrAddr.sin_family = AF_INET;
 	stSvrAddr.sin_port = htons(m_nPort);
-	stSvrAddr.sin_addr.s_addr = inet_addr(m_strHost.c_str());
+	//stSvrAddr.sin_addr.s_addr = inet_addr(m_strHost.c_str());
+	stSvrAddr.sin_addr.s_addr = htonl(INADDR_ANY);
 
 	int n = 1;
 	setsockopt(m_nListenFD, SOL_SOCKET, SO_REUSEADDR, (const void *)&n, sizeof(n));
