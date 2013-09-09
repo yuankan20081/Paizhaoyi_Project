@@ -235,11 +235,12 @@ bool DataPool::DumpPicPath(DBHead *pstDBHead)
 	//TODO
 	//guid, qrcode generate
 	
-		if(0 == fork())
-		{
+	if(0 == fork())
+	{
 
-			execl("./ReqRQCode.py", "ReqRQCode.py", res[0]["id"].c_str(), NULL);
-		}
+		execl("/usr/bin/python", "usr/bin/python", "ReqRQCode.py", res[0]["id"].c_str(), NULL);
+		return true;
+	}
 	
 	
 	pthread_t tid;

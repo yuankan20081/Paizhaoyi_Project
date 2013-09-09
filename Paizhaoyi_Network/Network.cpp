@@ -11,7 +11,7 @@
 #include <memory>
 #include <fstream>
 #include <sstream>
-
+#include <time.h>
 #define DEF_SAVE_DIR "./pics/"
 
 //extern class DB;
@@ -23,7 +23,8 @@ static void SaveActtion(Head *stHead);
 static string MakePath(const char *pszFilename)
 {
 	std::ostringstream oss;
-	oss << DEF_SAVE_DIR << pszFilename;
+	//oss << DEF_SAVE_DIR << pszFilename;
+	oss << DEF_SAVE_DIR << time(0) << "-" << pszFilename;
 	string strPath = oss.str();
 	return strPath;
 }
