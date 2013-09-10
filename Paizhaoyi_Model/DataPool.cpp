@@ -305,7 +305,7 @@ bool DataPool::DumpAction(DBHead *pstDBHead)
 			 << "1, " << mysqlpp::quote_only << pstDBHead->m_strMachineID << ")";
 		*/
 		query << "select id from print_type where description=" << mysqlpp::quote_only << g_vecField[i];
-		mysqlpp::StoreQueryResult ret = query.store();
+		mysqlpp::StoreQueryResult res = query.store();
 		query << "insert into download_statistics(date, print_type_id, machineid) values(current_timestamp(), "
 			<< res[0]["id"] << ", " << mysqlpp::quote_only << pstDBHead->m_strMachineID << ")";
 		query.execute();
