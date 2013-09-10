@@ -30,9 +30,10 @@ struct dumy
 {
 	dumy()
 	{
-		g_vecField.push_back("image_download_times");
-		g_vecField.push_back("qrcode_download_times");
-		g_vecField.push_back("image_qrcode_download_times");
+
+		g_vecField.push_back("print");
+		g_vecField.push_back("qrcode");
+		g_vecField.push_back("print_qrcode");
 	}
 } Dah;//////////////////////////////////////////////////////////////////////////
 
@@ -82,6 +83,7 @@ void *ThSendQRCode(void *buf)
 	mysqlpp::StoreQueryResult res = query.store();
 	if(res.num_rows() != 1)
 	{
+
 		//TODO
 	}
 	unsigned long uFileSize = GetFileSize(res[0]["qrcode_src"].c_str());
@@ -245,8 +247,9 @@ bool DataPool::DumpPicPath(DBHead *pstDBHead)
 	}
 	else
 	{
+		DBHead stTmpHead(*pstDBHead);
 		pthread_t tid;
-		pthread_create(&tid, NULL, ThSendQRCode, (void *)pstDBHead);
+		pthread_create(&tid, NULL, ThSendQRCode, (void *)&stTmpHead);
 
 		pthread_mutex_unlock(&g_mtxPic);
 		return true;
@@ -297,8 +300,14 @@ bool DataPool::DumpAction(DBHead *pstDBHead)
 		}
 
 		mysqlpp::Query query = m_sqlConn->query();
+		/*
 		query << "insert into download_statistics(date, " << g_vecField[i] << ", machineid) values(current_timestamp(), " 
 			 << "1, " << mysqlpp::quote_only << pstDBHead->m_strMachineID << ")";
+		*/
+		query << "select id from print_type where description=" << mysqlpp::quote_only << g_vecField[i];
+		mysqlpp::StoreQueryResult ret = query.store();
+		query << "insert into download_statistics(date, print_type_id, machineid) values(current_timestamp(), "
+			<< res[0]["id"] << ", " << mysqlpp::quote_only << pstDBHead->m_strMachineID << ")";
 		query.execute();
 		
 	}

@@ -5,6 +5,10 @@
 
 size_t GetFileSize(const string &strPath)
 {
+	if(0 == strPath.size())
+	{
+		return 0;
+	}
 	struct stat st;
 	stat(strPath.c_str(), &st);
 	return st.st_size;

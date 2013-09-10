@@ -73,16 +73,16 @@ void *ThreadFunc(void *data)
 {
 	using std::ofstream;
 
-	Head *stHead = (Head *)data;
+	Head stHead = *((Head *)data);
 	//std::shared_ptr<char> buf(new char[stHead->m_nDataLength]);
 	
-	if(stHead->m_bIsUpload)
+	if(stHead.m_bIsUpload)
 	{
-		SavePic(stHead);
+		SavePic(&stHead);
 	}
 	else
 	{
-		SaveActtion(stHead);
+		SaveActtion(&stHead);
 	}
 	return NULL;
 }
@@ -197,13 +197,13 @@ void SavePic(Head *stHead)
 	char *buf = new char[stHead->m_nDataLength];
 	int nLeft = stHead->m_nDataLength;
 	char *tmp = buf;
+	int nSockFD;
 	while(nLeft)
 	{
-		int ret = recv(stHead->m_sockFD, (void *)tmp, nLeft, 0);
+		int ret = recv(nSockFD, (void *)tmp, nLeft, 0);
 		//ret <= 0
 		if(ret == 0)
 		{
-			//³ö´í
 			//TODO
 			delete[] buf;
 			close(stHead->m_sockFD);
@@ -240,7 +240,7 @@ void SavePic(Head *stHead)
 	ofs.close();
 	delete[] buf;
 
-	mysqlDB.Save(DBHead(strPath, stHead->m_pszMachineID, stHead->m_sockFD));
+	mysqlDB.Save(DBHead(strPath, stHead->m_pszMachineID, nSockFD));
 }
 
 void SaveActtion(Head *stHead)

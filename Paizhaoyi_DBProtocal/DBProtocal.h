@@ -19,4 +19,5 @@ typedef struct DBProtocal
 	{
 
 	}
+
 } DBHead, *PDBHead;
