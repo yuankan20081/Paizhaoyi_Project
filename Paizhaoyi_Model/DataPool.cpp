@@ -87,6 +87,14 @@ void *ThSendQRCode(void *buf)
 		//TODO
 	}
 	unsigned long uFileSize = GetFileSize(res[0]["qrcode_src"].c_str());
+	if(0 == uFileSize)
+	{
+		Head tmp;
+		strcpy(tmp.m_pszPicName, "");
+		tmp.m_nDataLength = 0;
+		Network::SendData(pstDBHead->m_sockFD, &tmp, sizeof(Head));
+		return NULL;
+	}
 	ifstream ifs(res[0]["qrcode_src"].c_str());
 	if(!ifs)
 	{
