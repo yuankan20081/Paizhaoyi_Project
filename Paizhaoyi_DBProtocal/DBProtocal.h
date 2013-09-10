@@ -12,6 +12,7 @@ typedef struct DBProtocal
 	void *pParent;
 	unsigned long m_nID;
 	mysqlpp::Connection *m_pCurConn;
+	int m_nChild;
 
 	DBProtocal(const string &strPath, const string &nID, int nSockFD, unsigned long uBitFlag = 0, void *pDah = NULL)
 		:m_strPath(strPath), m_strMachineID(nID), m_sockFD(nSockFD), m_uActionBitFlag(uBitFlag), pParent(pDah)

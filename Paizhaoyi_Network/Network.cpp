@@ -12,6 +12,7 @@
 #include <fstream>
 #include <sstream>
 #include <time.h>
+#include <errno.h>
 #define DEF_SAVE_DIR "./pics/"
 
 //extern class DB;
@@ -173,6 +174,7 @@ void Network::Run()
 			}
 			else
 			{
+				SetNonBlock(fd);
 				//客户端连接后，应该将set中的位去掉。
 				//注意重置m_nMaxFD!
 				FD_CLR(fd, &m_stMainSet);
@@ -198,6 +200,28 @@ void SavePic(Head *stHead)
 	while(nLeft)
 	{
 		int ret = recv(stHead->m_sockFD, (void *)tmp, nLeft, 0);
+		//ret <= 0
+		if(ret == 0)
+		{
+			//出错
+			//TODO
+			delete[] buf;
+			close(stHead->m_sockFD);
+			return;
+		}
+		else if(ret < 0)
+		{
+			if(errno == EAGAIN)
+			{
+				continue;
+			}
+			else
+			{
+				delete[] buf;
+				close(stHead->m_sockFD);
+				return;
+			}
+		}
 		tmp += ret;
 		nLeft -= ret;
 	}
@@ -222,4 +246,12 @@ void SavePic(Head *stHead)
 void SaveActtion(Head *stHead)
 {
 	mysqlDB.Save(DBHead("", stHead->m_pszMachineID, stHead->m_sockFD, stHead->m_uActionBitFlag));
+}
+
+void Network::SetNonBlock(int nSocketFD)
+{
+	//struct timeval timeout = {3, 0};
+	fcntl(nSocketFD, F_SETFL, O_NONBLOCK);
+	//setsockopt(nSocketFD, SOL_SOCKET, SO_SNDTIMEO, (char *)&timeout, sizeof(struct timeval));
+	//setsockopt(nSocketFD, SOL_SOCKET, SO_RCVTIMEO, (char *)&timeout, sizeof(struct timeval));
 }

@@ -14,7 +14,7 @@ private:
 	bool Init();
 	void Run();
 	//int SendRaw(void *buf, size_t size);
-	void SetNonBlock();
+	void SetNonBlock(int nSocketFD);
 private:
 	int m_nListenFD;
 	string m_strHost;

@@ -12,6 +12,7 @@
 #include <cstdlib>
 #include <fstream>
 #include <time.h>
+#include <sys/wait.h>
 using std::bitset;
 using std::map;
 using std::ostringstream;
@@ -71,8 +72,9 @@ void *ThSendQRCode(void *buf)
 	int nSock = pstDBHead->m_sockFD;
 	unsigned long nID = pstDBHead->m_nID;
 	mysqlpp::Connection *pConn = pstDBHead->m_pCurConn;
-
-	sleep(1);//等待生成二维码
+	int nChild = pstDBHead->m_nChild;
+	//sleep(1);//等待生成二维码
+	waitpid(nChild, NULL, 0);
 	mysqlpp::Query query = pConn->query();
 	//vector<mysqlpp::Row> vecRow;
 	query << "select qrcode_src, guid from qrtest where id=" << nID;
@@ -235,19 +237,23 @@ bool DataPool::DumpPicPath(DBHead *pstDBHead)
 	//TODO
 	//guid, qrcode generate
 	
-	if(0 == fork())
+	if((pstDBHead->m_nChild= fork()) == 0)
 	{
 
 		execl("/usr/bin/python", "usr/bin/python", "ReqQRCode.py", res[0]["id"].c_str(), NULL);
 		return true;
 	}
-	
-	
-	pthread_t tid;
-	pthread_create(&tid, NULL, ThSendQRCode, (void *)pstDBHead);
+	else
+	{
+		pthread_t tid;
+		pthread_create(&tid, NULL, ThSendQRCode, (void *)pstDBHead);
 
-	pthread_mutex_unlock(&g_mtxPic);
-	return true;
+		pthread_mutex_unlock(&g_mtxPic);
+		return true;
+	}
+	
+	
+	
 	/*
 	ostringstream oss;
 	oss << "insert into test(pic_path, machine_id) values('" << pstDBHead->m_strPath << "', '" << pstDBHead->m_strMachineID << "')";
