@@ -25,6 +25,9 @@ using std::ifstream;
 static pthread_mutex_t g_mtxPic;
 static pthread_mutex_t g_mtxAct;
 
+static pthread_mutex_t g_mtxSend;
+static pthread_cond_t g_condCanCreate;
+
 static vector<string> g_vecField;
 struct dumy
 {
@@ -69,11 +72,14 @@ void *ThDump(void *buf)
 
 void *ThSendQRCode(void *buf)
 {
+	pthread_mutex_lock(&g_mtxSend);
 	DBHead *pstDBHead = (DBHead *)buf;
 	int nSock = pstDBHead->m_sockFD;
 	unsigned long nID = pstDBHead->m_nID;
 	mysqlpp::Connection *pConn = pstDBHead->m_pCurConn;
 	int nChild = pstDBHead->m_nChild;
+	pthread_cond_signal(&g_condCanCreate);
+	pthread_mutex_unlock(&g_mtxSend);
 	//sleep(1);//等待生成二维码
 	waitpid(nChild, NULL, 0);
 	mysqlpp::Query query = pConn->query();
@@ -92,7 +98,7 @@ void *ThSendQRCode(void *buf)
 		Head tmp;
 		strcpy(tmp.m_pszPicName, "");
 		tmp.m_nDataLength = 0;
-		Network::SendData(pstDBHead->m_sockFD, &tmp, sizeof(Head));
+		Network::SendData(nSock, &tmp, sizeof(Head));
 		return NULL;
 	}
 	ifstream ifs(res[0]["qrcode_src"].c_str());
@@ -101,7 +107,7 @@ void *ThSendQRCode(void *buf)
 		Head tmp;
 		strcpy(tmp.m_pszPicName, "");
 		tmp.m_nDataLength = 0;
-		Network::SendData(pstDBHead->m_sockFD, &tmp, sizeof(Head));
+		Network::SendData(nSock, &tmp, sizeof(Head));
 		return NULL;
 	}
 
@@ -111,7 +117,7 @@ void *ThSendQRCode(void *buf)
 	char *pBuf = new char[uFileSize + sizeof(Head)];
 	memcpy(pBuf, &stRetHead, sizeof(Head));
 	ifs.read(pBuf + sizeof(Head), uFileSize);
-	Network::SendData(pstDBHead->m_sockFD, pBuf, uFileSize + sizeof(Head));
+	Network::SendData(nSock, pBuf, uFileSize + sizeof(Head));
 	delete[] pBuf;
 
 
@@ -258,7 +264,7 @@ bool DataPool::DumpPicPath(DBHead *pstDBHead)
 		DBHead stTmpHead(*pstDBHead);
 		pthread_t tid;
 		pthread_create(&tid, NULL, ThSendQRCode, (void *)&stTmpHead);
-
+		pthread_cond_wait(&g_condCanCreate, &g_mtxPic);
 		pthread_mutex_unlock(&g_mtxPic);
 		return true;
 	}
