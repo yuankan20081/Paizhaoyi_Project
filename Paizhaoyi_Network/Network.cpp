@@ -197,7 +197,7 @@ void SavePic(Head *stHead)
 	char *buf = new char[stHead->m_nDataLength];
 	int nLeft = stHead->m_nDataLength;
 	char *tmp = buf;
-	int nSockFD;
+	int nSockFD = stHead->m_sockFD;
 	while(nLeft)
 	{
 		int ret = recv(nSockFD, (void *)tmp, nLeft, 0);
