@@ -25,7 +25,8 @@ static string MakePath(const char *pszFilename)
 {
 	std::ostringstream oss;
 	//oss << DEF_SAVE_DIR << pszFilename;
-	oss << DEF_SAVE_DIR << time(0) << "-" << pszFilename;
+	//oss << DEF_SAVE_DIR << time(0) << "-" << pszFilename;
+	oss << GetConfByName("savepath") << time(0) << "-" << pszFilename;
 	string strPath = oss.str();
 	return strPath;
 }
@@ -62,7 +63,7 @@ int Network::SendRaw(void *buf, size_t size)
 Network::Network(const string &host, const int port)
 	:m_strHost(host), m_nPort(port)
 {
-
+	m_nPort = std::stoi(GetConfByName("svrport"));
 }
 Network::~Network()
 {

@@ -1,6 +1,7 @@
 #include "CommonFuncs.h"
 #include <sys/socket.h>
 #include <time.h>
+#include <cstdlib>
 #include <fstream>
 #include <iostream>
 #include <map>
@@ -41,16 +42,16 @@ static void SplitString(const string &strKV, map<string, string> &mapConf)
 	unsigned int nDeliPos = strKV.find("=");
 	strKey.assign(strKV.c_str(), nDeliPos);
 	strVal.assign(strKV.c_str(), nDeliPos + 1, strKV.size() - nDeliPos - 1);
-	g_mapConf.insert(std::pair<string, string>(strKey, strVal));
+	mapConf.insert(std::pair<string, string>(strKey, strVal));
 
 }
 
 string GetConfByName(const string &strKeyName)
 {
 	static map<string, string> mapConf;
-	if(g_mapConf.size() != 0)
+	if(mapConf.size() != 0)
 	{
-		return g_mapConf.find(strKeyName)->second;
+		return mapConf.find(strKeyName)->second;
 	}
 	ifstream ifs("pzy_conf");
 	if(!ifs)
@@ -64,7 +65,7 @@ string GetConfByName(const string &strKeyName)
 		SplitString(strKV, mapConf);
 	}
 	ifs.close();
-	return g_mapConf[strKeyName];
+	return mapConf[strKeyName];
 
 
 }

@@ -1,5 +1,6 @@
 #include "DB.h"
 #include <pthread.h>
+#include "../Paizhaoyi_CommonFuncs/CommonFuncs.h"
 
 DB::DB(const string &strDbName, const string &strHost, const string &strUserName, const string &strPasswd /* = "" */)
 	:m_strDBName(strDbName), m_strHost(strHost), m_strUserName(strUserName), m_strPasswd(strPasswd)
@@ -30,7 +31,8 @@ bool DB::Save(const DBHead &stDBHead)
 }
 
 //global obj
-DB mysqlDB("pzy", "127.0.0.1", "root");
+//DB mysqlDB("pzy", "127.0.0.1", "root");
+DB mysqlDB(GetConfByName("db"), GetConfByName("host"), GetConfByName("user"), GetConfByName("pwd"));
 
 /*
 void *dumy(void *buf)
