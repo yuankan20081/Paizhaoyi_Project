@@ -9,3 +9,5 @@ size_t GetFileSize(const string	&strPath);
 void SendRaw(int sockFD, const char *pBuf, size_t uBufSize);
 
 time_t GetDayBegin();
+
+string GetConfByName(const string &strKeyName);
