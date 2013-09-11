@@ -72,21 +72,23 @@ void *ThDump(void *buf)
 
 void *ThSendQRCode(void *buf)
 {
-	pthread_mutex_lock(&g_mtxSend);
+	
 	DBHead *pstDBHead = (DBHead *)buf;
 	int nSock = pstDBHead->m_sockFD;
 	unsigned long nID = pstDBHead->m_nID;
 	mysqlpp::Connection *pConn = pstDBHead->m_pCurConn;
 	int nChild = pstDBHead->m_nChild;
 	pthread_cond_signal(&g_condCanCreate);
-	pthread_mutex_unlock(&g_mtxSend);
+	
 	//sleep(1);//等待生成二维码
 	waitpid(nChild, NULL, 0);
+	pthread_mutex_lock(&g_mtxSend);
 	mysqlpp::Query query = pConn->query();
 	//vector<mysqlpp::Row> vecRow;
 	query << "select qrcode_src, guid from qrtest where id=" << nID;
 	//query.storein(vecRow);
 	mysqlpp::StoreQueryResult res = query.store();
+	pthread_mutex_unlock(&g_mtxSend);
 	if(res.num_rows() != 1)
 	{
 
