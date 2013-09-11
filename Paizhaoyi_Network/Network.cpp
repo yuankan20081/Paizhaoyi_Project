@@ -63,7 +63,7 @@ int Network::SendRaw(void *buf, size_t size)
 Network::Network(const string &host, const int port)
 	:m_strHost(host), m_nPort(port)
 {
-	m_nPort = std::stoi(GetConfByName("svrport"));
+	m_nPort = atoi(GetConfByName("svrport").c_str());
 }
 Network::~Network()
 {
