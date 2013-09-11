@@ -22,10 +22,9 @@ using std::ifstream;
 
 #define MAX_SIZE 100
 
-static pthread_mutex_t g_mtxPic;
-static pthread_mutex_t g_mtxAct;
 
-static pthread_mutex_t g_mtxSend;
+
+static pthread_mutex_t g_mtxQuery;
 static pthread_cond_t g_condCanCreate;
 
 static vector<string> g_vecField;
@@ -40,23 +39,7 @@ struct dumy
 	}
 } Dah;//////////////////////////////////////////////////////////////////////////
 
-/*
-void *ThFuncInSave(void *buf)
-{
-	DataPool *dp = (DataPool *)buf;
-	pthread_mutex_lock(&dp->m_stMutex);
 
-	while(dp->m_qDataPool.empty())
-	{
-		pthread_cond_wait(&dp->m_stCanSave, &dp->m_stMutex);
-	}
-
-	dp->m_qDataPool.push("");
-
-	pthread_mutex_unlock(&dp->m_stMutex);
-	return NULL;
-}
-*/
 
 
 
@@ -78,17 +61,17 @@ void *ThSendQRCode(void *buf)
 	unsigned long nID = pstDBHead->m_nID;
 	mysqlpp::Connection *pConn = pstDBHead->m_pCurConn;
 	int nChild = pstDBHead->m_nChild;
-	pthread_cond_signal(&g_condCanCreate);
+	pthread_cond_signal(&g_condCanCreate);//已经保存数据，通知取数据线程
 	
 	//sleep(1);//等待生成二维码
 	waitpid(nChild, NULL, 0);
-	pthread_mutex_lock(&g_mtxSend);
+	pthread_mutex_lock(&g_mtxQuery);
 	mysqlpp::Query query = pConn->query();
 	//vector<mysqlpp::Row> vecRow;
 	query << "select qrcode_src, guid from qrtest where id=" << nID;
 	//query.storein(vecRow);
 	mysqlpp::StoreQueryResult res = query.store();
-	pthread_mutex_unlock(&g_mtxSend);
+	pthread_mutex_unlock(&g_mtxQuery);
 	if(res.num_rows() != 1)
 	{
 
@@ -122,47 +105,8 @@ void *ThSendQRCode(void *buf)
 	Network::SendData(nSock, pBuf, uFileSize + sizeof(Head));
 	delete[] pBuf;
 
+	return NULL;
 
-
-
-	/*
-	ostringstream oss;
-	oss << "select qr_code , uuid from test where id=" << nID - 1;
-	try
-	{
-		RecordSet res = pConn->Execute(oss.str());
-		res.FetchOneRow();
-		Log::Info("before 1st");
-		Log::Info(res.FieldName(0));
-		ifstream ifs(res["qr_code"].c_str());
-		Log::Info("first qrcode");
-		if(!ifs)
-		{
-			return NULL;
-		}
-		unsigned long uSize = GetFileSize(res["qr_code"].c_str());
-		Log::Info(res["qr_code"]);
-		Log::Info("2nd qr_code");
-		Head stRetHead;
-		char *pBuf = new char[uSize + sizeof(stRetHead)];
-		ifs.read(pBuf + sizeof(stRetHead), uSize);
-		ifs.close();
-		strcpy(stRetHead.m_pszPicName, res["uuid"].c_str());
-		Log::Info(res["uuid"]);
-		stRetHead.m_nDataLength = uSize;
-		memcpy(pBuf, &stRetHead, sizeof(stRetHead));
-		Network::SendData(pstDBHead->m_sockFD, pBuf, uSize + sizeof(stRetHead));
-
-		delete[] pBuf;
-		
-		
-	}
-	catch(string &strError)
-	{
-	  Log::Info(strError);
-	  return NULL;
-	}
-	*/
 }
 
 DataPool::DataPool(int nPoolSize, mysqlpp::Connection *conn)
@@ -231,7 +175,7 @@ bool DataPool::DumpToDB()
 
 bool DataPool::DumpPicPath(DBHead *pstDBHead)
 {
-	pthread_mutex_lock(&g_mtxPic);
+	pthread_mutex_lock(&g_mtxQuery);
 
 	mysqlpp::Query query = this->m_sqlConn->query();
 	query << "insert into qrtest(images, machineid) values(" << mysqlpp::quote_only << pstDBHead->m_strPath << ", " 
@@ -263,11 +207,11 @@ bool DataPool::DumpPicPath(DBHead *pstDBHead)
 	}
 	else
 	{
-		DBHead stTmpHead(*pstDBHead);
+		//DBHead stTmpHead(*pstDBHead);
 		pthread_t tid;
-		pthread_create(&tid, NULL, ThSendQRCode, (void *)&stTmpHead);
-		pthread_cond_wait(&g_condCanCreate, &g_mtxPic);
-		pthread_mutex_unlock(&g_mtxPic);
+		pthread_create(&tid, NULL, ThSendQRCode, (void *)pstDBHead);
+		pthread_cond_wait(&g_condCanCreate, &g_mtxQuery);
+		pthread_mutex_unlock(&g_mtxQuery);
 		return true;
 	}
 	
@@ -306,7 +250,7 @@ bool DataPool::DumpPicPath(DBHead *pstDBHead)
 
 bool DataPool::DumpAction(DBHead *pstDBHead)
 {
-	pthread_mutex_lock(&g_mtxAct);
+	pthread_mutex_lock(&g_mtxQuery);
 	bitset<3> flag(pstDBHead->m_uActionBitFlag);
 	for(int i = 0; i < 3; ++i)
 	{
@@ -327,38 +271,7 @@ bool DataPool::DumpAction(DBHead *pstDBHead)
 		query.execute();
 		
 	}
-	/*
-	ostringstream oss;
-	for(int i = 0; i < 3; i++)
-	{
-		if(flag[i])
-		{
-			oss << "select " << g_vecField[i] << " from count where machine_id='" << pstDBHead->m_strMachineID << "'";
-			string strSqlGetVal = oss.str();
-			try
-			{
-				RecordSet res = m_sqlConn->Execute(strSqlGetVal);
-				res.FetchOneRow();
-				int nOrigCount = atoi(res[g_vecField[i]].c_str());
-				oss.clear();
-				oss.str("");
-				oss << "update count set " << g_vecField[i] << "=" << nOrigCount + 1 
-					<< " where machine_id='" << pstDBHead->m_strMachineID << "'";
-				string strSqlUpdateVal = oss.str();
-				m_sqlConn->Execute(strSqlUpdateVal);
-				
-				pthread_mutex_unlock(&g_mtxAct);
-				return true;
-			}
-			catch(string &strError)
-			{
-				pthread_mutex_unlock(&g_mtxAct);
-				return false;
-			}
-		}
-	}
 
-	*/
-	pthread_mutex_unlock(&g_mtxAct);
+	pthread_mutex_unlock(&g_mtxQuery);
 	return false;
 }
