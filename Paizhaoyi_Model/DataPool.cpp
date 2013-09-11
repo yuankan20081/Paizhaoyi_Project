@@ -275,7 +275,7 @@ bool DataPool::DumpAction(DBHead *pstDBHead)
 		mysqlpp::StoreQueryResult res_price = query.store();
 
 		query << "insert into download_statistics(date, print_type_id, machineid, price) values(current_timestamp(), "
-			<< res_id[0]["id"] << ", " << mysqlpp::quote_only << pstDBHead->m_strMachineID << ", " << mysqlpp::sql_decimal(res_price[0][g_vecFieldPrice[i]]) << ")";
+			<< res_id[0]["id"] << ", " << mysqlpp::quote_only << pstDBHead->m_strMachineID << ", " << mysqlpp::sql_decimal(res_price[0][g_vecFieldPrice[i].c_str()]) << ")";
 		query.execute();
 		
 	}
