@@ -28,6 +28,7 @@ static pthread_mutex_t g_mtxQuery;
 static pthread_cond_t g_condCanCreate;
 
 static vector<string> g_vecField;
+static vector<string> g_vecFieldPrice;
 struct dumy
 {
 	dumy()
@@ -36,6 +37,10 @@ struct dumy
 		g_vecField.push_back("print");
 		g_vecField.push_back("qrcode");
 		g_vecField.push_back("print_qrcode");
+
+		g_vecFieldPrice.push_back("print_price");
+		g_vecFieldPrice.push_back("qrcode_price");
+		g_vecFieldPrice.push_back("takeawayall_price");
 	}
 } Dah;//////////////////////////////////////////////////////////////////////////
 
@@ -265,9 +270,12 @@ bool DataPool::DumpAction(DBHead *pstDBHead)
 			 << "1, " << mysqlpp::quote_only << pstDBHead->m_strMachineID << ")";
 		*/
 		query << "select id from print_type where description=" << mysqlpp::quote_only << g_vecField[i];
-		mysqlpp::StoreQueryResult res = query.store();
-		query << "insert into download_statistics(date, print_type_id, machineid) values(current_timestamp(), "
-			<< res[0]["id"] << ", " << mysqlpp::quote_only << pstDBHead->m_strMachineID << ")";
+		mysqlpp::StoreQueryResult res_id = query.store();
+		query << "select " << g_vecFieldPrice[i] << " from machine where machine=" << mysqlpp::quote_only << pstDBHead->m_strMachineID;
+		mysqlpp::StoreQueryResult res_price = query.store();
+
+		query << "insert into download_statistics(date, print_type_id, machineid, price) values(current_timestamp(), "
+			<< res_id[0]["id"] << ", " << mysqlpp::quote_only << pstDBHead->m_strMachineID << ", " << res_price[0][g_vecFieldPrice[i]] << ")";
 		query.execute();
 		
 	}

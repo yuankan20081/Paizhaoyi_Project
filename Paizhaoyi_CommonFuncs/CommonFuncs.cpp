@@ -53,10 +53,10 @@ string GetConfByName(const string &strKeyName)
 	{
 		return mapConf.find(strKeyName)->second;
 	}
-	ifstream ifs("pzy_conf");
+	ifstream ifs("setting.conf");
 	if(!ifs)
 	{
-		cerr << "config file: pzy_conf not found\n" ; 
+		cerr << "config file: setting.conf not found\n" ; 
 		exit(1);		
 	}
 	string strKV;
